@@ -21,7 +21,7 @@ TRACK_LIMIT_PER_TAG = 12
 MAX_NEW_YOUTUBE_SEARCHES = 40 # Strict limit per daily run to protect free quota (1 search = 100 units)
 
 GENRE_TAGS = {
-    "mollywood": ["mollywood", "malayalam"],
+    "mollywood": ["mollywood", "malayalam cinema"],
     "melodies": ["malayalam melody", "malayalam romantic"],
     "indie": ["malayalam indie"],
     "hiphop": ["malayalam hip hop", "malayalam rap"],
