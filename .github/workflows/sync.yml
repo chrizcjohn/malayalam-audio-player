@@ -1,33 +1,43 @@
-name: Daily Malayalam Tracks Sync
+name: Sync Songs & Deploy Page
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     # Runs at 00:00 UTC daily (5:30 AM IST)
     - cron: '0 0 * * *'
   workflow_dispatch:
     # Allows manual trigger of sync from GitHub Actions tab
 
+# Set concurrency to prevent multiple deployments running at the same time
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
 jobs:
-  sync-and-deploy:
+  sync-and-build:
     runs-on: ubuntu-latest
     permissions:
       contents: write # Required to push updated JSON files back to the repository
-
+      pages: write    # Required to deploy to Pages
+      id-token: write # Required to authenticate to Pages
+    
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+        with:
+          # Fetch all history so git push doesn't fail on out-of-sync branches
+          fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/checkout@v4
-        # We also need python setup
-      
+      # --- 1. Python Sync Aggregator ---
       - name: Set up Python VM
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          cache: 'pip' # caching pip dependencies for faster runs
+          cache: 'pip'
 
-      - name: Install Dependencies
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f backend/requirements.txt ]; then pip install -r backend/requirements.txt; fi
@@ -39,7 +49,7 @@ jobs:
         run: |
           python backend/sync_songs.py
 
-      - name: Commit and Push Changes
+      - name: Commit and Push cache/playlist changes
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -50,8 +60,46 @@ jobs:
           # Check if there are changes before committing
           if ! git diff --quiet || ! git diff --staged --quiet; then
             git commit -m "auto: update daily songs playlist [skip ci]"
+            # Pull first to prevent conflicts if branch updated
+            git pull --rebase
             git push
             echo "Changes pushed to repository."
           else
             echo "No changes in playlist. Skipping commit."
           fi
+
+      # --- 2. Vite Build ---
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Build static Vite page
+        run: npm run build
+
+      # --- 3. Upload Static Artifacts ---
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: sync-and-build
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
