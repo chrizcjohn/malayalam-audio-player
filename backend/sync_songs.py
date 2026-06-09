@@ -22,7 +22,7 @@ MAX_NEW_YOUTUBE_SEARCHES = 40 # Strict limit per daily run to protect free quota
 
 GENRE_TAGS = {
     "mollywood": ["mollywood", "malayalam"],
-    "melodies": ["malayalam melody", "romantic"],
+    "melodies": ["malayalam melody", "malayalam romantic"],
     "indie": ["malayalam indie"],
     "hiphop": ["malayalam hip hop", "malayalam rap"],
     "pop": ["malayalam pop"],
@@ -37,7 +37,8 @@ FALLBACK_TRACKS = {
     "folk": ["_BfH_T8G8s0", "tO01J-M3g0U"],
     "classics": ["7wMIn_Wk7_U"],
     "hiphop": ["8a0UvOveQ68"],
-    "indie": ["tO01J-M3g0U", "8a0UvOveQ68", "2x9sI6q3Spg"]
+    "indie": ["tO01J-M3g0U", "8a0UvOveQ68", "2x9sI6q3Spg"],
+    "melodies": ["L0yNMDXmS0E", "88M6K95k-v4", "7wMIn_Wk7_U", "maGx1qLP3GE"]
 }
 
 # Resolve paths relative to project root
@@ -200,9 +201,11 @@ def main():
             if vid not in unique_ids:
                 unique_ids.append(vid)
                 
-        # If API returned no tracks for this genre, fall back to our curated list
-        if not unique_ids and genre in FALLBACK_TRACKS:
-            unique_ids = FALLBACK_TRACKS[genre]
+        # If API returned too few tracks (< 3) for this genre, append our curated list to fill it out
+        if len(unique_ids) < 3 and genre in FALLBACK_TRACKS:
+            for fallback_id in FALLBACK_TRACKS[genre]:
+                if fallback_id not in unique_ids:
+                    unique_ids.append(fallback_id)
             
         genre_results[genre] = unique_ids
         print(f"Genre {genre} has {len(unique_ids)} tracks.")
