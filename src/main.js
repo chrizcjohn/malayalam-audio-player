@@ -8,6 +8,9 @@ let currentVideoId = null;
 let player = null;
 let isMuted = false;
 let savedVolume = 80;
+let autoplayEnabled = true;
+let progressInterval = null;
+let isSeeking = false;
 
 // History Tracking
 const playHistory = [];
@@ -28,6 +31,13 @@ const visualizer = document.getElementById('visualizer-wrapper');
 const playerOverlay = document.getElementById('player-overlay');
 const overlayText = document.getElementById('overlay-text');
 const genreGrid = document.getElementById('genre-grid');
+const autoplayToggle = document.getElementById('autoplay-toggle');
+const playlistList = document.getElementById('playlist-list');
+const playlistCount = document.getElementById('playlist-count');
+const playlistContainer = document.getElementById('playlist-container');
+const progressSlider = document.getElementById('progress-slider');
+const timeElapsed = document.getElementById('time-elapsed');
+const timeDuration = document.getElementById('time-duration');
 
 // 1. Fetch Songs Database
 async function initSongsData() {
@@ -41,19 +51,82 @@ async function initSongsData() {
         
         // Ensure "all" is populated if not present
         if (!songsData.all) {
-            const allIds = new Set();
+            const allTracks = [];
+            const seenIds = new Set();
             Object.keys(songsData).forEach(genre => {
-                songsData[genre].forEach(id => allIds.add(id));
+                songsData[genre].forEach(track => {
+                    if (!seenIds.has(track.id)) {
+                        seenIds.add(track.id);
+                        allTracks.push(track);
+                    }
+                });
             });
-            songsData.all = Array.from(allIds);
+            songsData.all = allTracks;
         }
         
         updateOverlay('Playlist loaded. Loading player...');
+        renderPlaylist();
         loadYouTubePlayerAPI();
     } catch (error) {
         console.error('Failed to load songs.json:', error);
         updateOverlay('Failed to load songs database. Please try reloading.');
     }
+}
+
+// Render playlist scroll list
+function renderPlaylist() {
+    if (!songsData || !songsData[currentGenre]) return;
+    
+    playlistList.innerHTML = '';
+    const tracks = songsData[currentGenre];
+    playlistCount.textContent = tracks.length;
+    
+    if (tracks.length === 0) {
+        playlistList.innerHTML = '<li class="playlist-placeholder">No tracks available in this genre.</li>';
+        return;
+    }
+    
+    tracks.forEach((track, index) => {
+        const li = document.createElement('li');
+        li.className = 'playlist-item';
+        li.dataset.id = track.id;
+        
+        // Mark active if playing
+        if (track.id === currentVideoId) {
+            li.classList.add('active');
+        }
+        
+        li.innerHTML = `
+            <span class="playlist-item-num">${index + 1}</span>
+            <div class="playlist-item-details">
+                <div class="playlist-item-title" title="${track.title}">${track.title}</div>
+                <div class="playlist-item-artist">${track.artist}</div>
+            </div>
+        `;
+        
+        li.addEventListener('click', () => {
+            playSong(track.id, true);
+        });
+        
+        playlistList.appendChild(li);
+    });
+    
+    highlightCurrentTrack(false); // Highlight and scroll without force
+}
+
+// Highlight currently playing track in playlist
+function highlightCurrentTrack(scrollIntoView = true) {
+    const items = playlistList.querySelectorAll('.playlist-item');
+    items.forEach(item => {
+        if (item.dataset.id === currentVideoId) {
+            item.classList.add('active');
+            if (scrollIntoView) {
+                item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        } else {
+            item.classList.remove('active');
+        }
+    });
 }
 
 // 2. Load YouTube API
@@ -115,12 +188,15 @@ function onPlayerStateChange(event) {
             btnPlayPause.querySelector('.pause-icon').classList.remove('hidden');
             visualizer.classList.add('active');
             updateSongInfo();
+            highlightCurrentTrack(true);
+            startProgressTracker();
             break;
             
         case YT.PlayerState.PAUSED:
             btnPlayPause.querySelector('.play-icon').classList.remove('hidden');
             btnPlayPause.querySelector('.pause-icon').classList.add('hidden');
             visualizer.classList.remove('active');
+            stopProgressTracker();
             break;
             
         case YT.PlayerState.BUFFERING:
@@ -128,14 +204,25 @@ function onPlayerStateChange(event) {
             break;
             
         case YT.PlayerState.ENDED:
-            // Auto-advance to next random track
-            playNextTrack();
+            stopProgressTracker();
+            resetProgressBar();
+            // Auto-advance to next random track if autoplay is enabled
+            if (autoplayEnabled) {
+                playNextTrack();
+            } else {
+                btnPlayPause.querySelector('.play-icon').classList.remove('hidden');
+                btnPlayPause.querySelector('.pause-icon').classList.add('hidden');
+                visualizer.classList.remove('active');
+                updateOverlay('Track Finished', false);
+            }
             break;
             
         case YT.PlayerState.CUED:
             visualizer.classList.remove('active');
             btnPlayPause.querySelector('.play-icon').classList.remove('hidden');
             btnPlayPause.querySelector('.pause-icon').classList.add('hidden');
+            stopProgressTracker();
+            resetProgressBar();
             break;
     }
 }
@@ -175,37 +262,37 @@ function updateSongInfo() {
 function selectRandomSong(autoplay = true) {
     if (!songsData || !songsData[currentGenre]) return;
     
-    const songIds = songsData[currentGenre];
-    if (songIds.length === 0) {
+    const tracks = songsData[currentGenre];
+    if (tracks.length === 0) {
         songTitle.textContent = 'No tracks available';
         songArtist.textContent = 'Add tracks to this genre tag';
         return;
     }
     
     // Filter out recently played tracks to maintain diversity
-    let availableSongs = songIds.filter(id => !recentTracks.has(id));
+    let availableSongs = tracks.filter(t => !recentTracks.has(t.id));
     
     // If all available tracks are recently played, reset the list
     if (availableSongs.length === 0) {
         recentTracks.clear();
-        availableSongs = songIds;
+        availableSongs = tracks;
     }
     
     // If there is only one track, just play it
-    let chosenId = null;
+    let chosenTrack = null;
     if (availableSongs.length === 1) {
-        chosenId = availableSongs[0];
+        chosenTrack = availableSongs[0];
     } else {
         // Exclude the current song if possible, unless it's the only one left
-        let selectionPool = availableSongs.filter(id => id !== currentVideoId);
+        let selectionPool = availableSongs.filter(t => t.id !== currentVideoId);
         if (selectionPool.length === 0) selectionPool = availableSongs;
         
         const randomIndex = Math.floor(Math.random() * selectionPool.length);
-        chosenId = selectionPool[randomIndex];
+        chosenTrack = selectionPool[randomIndex];
     }
     
-    if (chosenId) {
-        playSong(chosenId, autoplay);
+    if (chosenTrack) {
+        playSong(chosenTrack.id, autoplay);
     }
 }
 
@@ -227,6 +314,9 @@ function playSong(videoId, autoplay = true) {
         recentTracks.delete(firstAdded);
     }
     
+    // Highlight track in playlist
+    highlightCurrentTrack(true);
+    
     // Show spinner overlay
     updateOverlay('Loading video...');
     
@@ -235,9 +325,16 @@ function playSong(videoId, autoplay = true) {
         player.loadVideoById(videoId);
     } else {
         player.cueVideoById(videoId);
-        // Display placeholder info until played
-        songTitle.textContent = 'Ready to Play';
-        songArtist.textContent = 'Press play or choose next song';
+        // Find metadata locally to display instantly
+        const tracks = songsData[currentGenre] || [];
+        const currentTrack = tracks.find(t => t.id === videoId);
+        if (currentTrack) {
+            songTitle.textContent = currentTrack.title;
+            songArtist.textContent = currentTrack.artist;
+        } else {
+            songTitle.textContent = 'Ready to Play';
+            songArtist.textContent = 'Press play or choose next song';
+        }
     }
 }
 
@@ -269,6 +366,57 @@ function updateOverlay(text, showSpinner = true) {
         spinner.classList.add('hidden');
     }
     playerOverlay.classList.remove('hidden');
+}
+
+function formatTime(seconds) {
+    if (isNaN(seconds) || seconds === undefined || seconds === null) return '0:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+function startProgressTracker() {
+    if (progressInterval) clearInterval(progressInterval);
+    progressInterval = setInterval(updateProgressBar, 500);
+}
+
+function stopProgressTracker() {
+    if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+    }
+}
+
+function updateProgressBar() {
+    if (!player || typeof player.getCurrentTime !== 'function' || isSeeking) return;
+    
+    try {
+        const currentTime = player.getCurrentTime();
+        const duration = player.getDuration();
+        
+        if (duration && duration > 0) {
+            progressSlider.max = Math.floor(duration);
+            progressSlider.value = Math.floor(currentTime);
+            timeElapsed.textContent = formatTime(currentTime);
+            timeDuration.textContent = formatTime(duration);
+            
+            // Highlight background gradient
+            const percentage = (currentTime / duration) * 100;
+            progressSlider.style.background = `linear-gradient(to right, hsl(150, 80%, 50%) ${percentage}%, rgba(255, 255, 255, 0.1) ${percentage}%)`;
+        } else {
+            resetProgressBar();
+        }
+    } catch (e) {
+        console.error("Error updating progress bar", e);
+    }
+}
+
+function resetProgressBar() {
+    progressSlider.value = 0;
+    progressSlider.max = 100;
+    timeElapsed.textContent = '0:00';
+    timeDuration.textContent = '0:00';
+    progressSlider.style.background = 'rgba(255, 255, 255, 0.1)';
 }
 
 // 6. Event Listeners Setup
@@ -323,6 +471,30 @@ function setupControls() {
         }
     });
 
+    // Autoplay toggle change
+    autoplayToggle.addEventListener('change', () => {
+        autoplayEnabled = autoplayToggle.checked;
+    });
+
+    // Playback Progress Slider events
+    progressSlider.addEventListener('input', (e) => {
+        isSeeking = true;
+        const seekValue = parseInt(e.target.value);
+        timeElapsed.textContent = formatTime(seekValue);
+        
+        const max = parseInt(progressSlider.max) || 100;
+        const percentage = (seekValue / max) * 100;
+        progressSlider.style.background = `linear-gradient(to right, hsl(150, 80%, 50%) ${percentage}%, rgba(255, 255, 255, 0.1) ${percentage}%)`;
+    });
+
+    progressSlider.addEventListener('change', (e) => {
+        if (player && typeof player.seekTo === 'function') {
+            const seekValue = parseInt(e.target.value);
+            player.seekTo(seekValue, true);
+        }
+        isSeeking = false;
+    });
+
     // Genre pill click events
     genreGrid.addEventListener('click', (e) => {
         const targetPill = e.target.closest('.genre-pill');
@@ -340,7 +512,10 @@ function setupControls() {
         if (newGenre !== currentGenre) {
             currentGenre = newGenre;
             recentTracks.clear(); // Clear recent tracks on genre switch to avoid starvation
-            selectRandomSong(true);
+            renderPlaylist(); // Render new playlist
+            
+            // Auto play or cue initial song depending on autoplay toggle state
+            selectRandomSong(autoplayEnabled);
         }
     });
 }

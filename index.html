@@ -63,6 +63,13 @@
                     <p class="song-artist" id="song-artist">Playback streams directly from official YouTube source</p>
                 </div>
 
+                <!-- Playback Progress Bar -->
+                <div class="progress-container">
+                    <span class="time-label" id="time-elapsed">0:00</span>
+                    <input type="range" class="progress-slider" id="progress-slider" min="0" max="100" value="0" aria-label="Playback progress slider">
+                    <span class="time-label" id="time-duration">0:00</span>
+                </div>
+
                 <!-- Custom audio controls -->
                 <div class="playback-controls">
                     <button class="ctrl-btn" id="btn-prev" aria-label="Previous Track" title="Previous Track" disabled>
@@ -79,13 +86,24 @@
                     </button>
                 </div>
 
-                <!-- Volume level slider -->
-                <div class="volume-control">
-                    <button class="volume-btn" id="btn-mute" aria-label="Mute Volume" title="Mute">
-                        <svg id="volume-icon-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-                        <svg id="volume-icon-mute" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-                    </button>
-                    <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80" aria-label="Volume level slider">
+                <!-- Volume level slider & Autoplay Toggle -->
+                <div class="controls-footer-row">
+                    <div class="volume-control">
+                        <button class="volume-btn" id="btn-mute" aria-label="Mute Volume" title="Mute">
+                            <svg id="volume-icon-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                            <svg id="volume-icon-mute" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                        </button>
+                        <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80" aria-label="Volume level slider">
+                    </div>
+
+                    <!-- Custom Switch for Autoplay -->
+                    <div class="autoplay-control">
+                        <span class="autoplay-label">Autoplay</span>
+                        <label class="switch" for="autoplay-toggle">
+                            <input type="checkbox" id="autoplay-toggle" checked>
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </section>
@@ -103,6 +121,16 @@
                 <button class="genre-pill" data-genre="rock" id="pill-rock">Rock</button>
                 <button class="genre-pill" data-genre="folk" id="pill-folk">Folk</button>
                 <button class="genre-pill" data-genre="classics" id="pill-classics">Classics</button>
+            </div>
+        </section>
+
+        <!-- Scrollable Playlist Queue Section (Moved to Bottom) -->
+        <section class="playlist-section" aria-label="Playlist Queue">
+            <h3 class="section-title">Playlist Queue (<span id="playlist-count">0</span>)</h3>
+            <div class="playlist-container" id="playlist-container">
+                <ul class="playlist-list" id="playlist-list">
+                    <li class="playlist-placeholder">Select a genre to populate the track queue.</li>
+                </ul>
             </div>
         </section>
 

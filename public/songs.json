@@ -1,139 +1,615 @@
 {
   "mollywood": [
-    "epAFDEJImrU",
-    "P7-xs4XF4CA",
-    "PlAY2AaVJFY",
-    "QcESg-9Vfzo",
-    "Tfi3oWgZp1Y",
-    "VzT2xurZrbI",
-    "HUAAYwtusLI",
-    "PcsvpfKPOMQ",
-    "WYtnfsDJ6IA",
-    "W0fKl43QmIE",
-    "d6pZAj6YLsk",
-    "CWpUqIYV9ok",
-    "K5s6A3laAXc",
-    "Lq5d4tilc9o",
-    "owvCPHJWJcE",
-    "NZxjtbhEmkc",
-    "I2-JBtOZ8H0",
-    "GrB_zJwUFkc",
-    "jngMCIY4hm8",
-    "maGx1qLP3GE"
+    {
+      "id": "epAFDEJImrU",
+      "title": "Darshana",
+      "artist": "Hesham Abdul Wahab"
+    },
+    {
+      "id": "P7-xs4XF4CA",
+      "title": "Kudukku",
+      "artist": "Vineeth Sreenivasan"
+    },
+    {
+      "id": "PlAY2AaVJFY",
+      "title": "Aaradhike",
+      "artist": "Shreya Ghoshal"
+    },
+    {
+      "id": "QcESg-9Vfzo",
+      "title": "Appangal Embadum",
+      "artist": "Anna Katharina Valayil"
+    },
+    {
+      "id": "Tfi3oWgZp1Y",
+      "title": "Lajjavathiye",
+      "artist": "Jassie Gift"
+    },
+    {
+      "id": "VzT2xurZrbI",
+      "title": "Kalapakkaara",
+      "artist": "Jakes Bejoy"
+    },
+    {
+      "id": "HUAAYwtusLI",
+      "title": "Jaada",
+      "artist": "Sushin Shyam"
+    },
+    {
+      "id": "PcsvpfKPOMQ",
+      "title": "Athiran - Ee Kaattu",
+      "artist": "Sithara Krishnakumar"
+    },
+    {
+      "id": "WYtnfsDJ6IA",
+      "title": "Scene Contra",
+      "artist": "Gopi Sundar"
+    },
+    {
+      "id": "W0fKl43QmIE",
+      "title": "Manikya Malaraya Poovi",
+      "artist": "Vineeth Sreenivasan"
+    },
+    {
+      "id": "d6pZAj6YLsk",
+      "title": "Ajitha Hare",
+      "artist": "Gowry Lekshmi"
+    },
+    {
+      "id": "CWpUqIYV9ok",
+      "title": "Cherukadhapole",
+      "artist": "Rex Vijayan"
+    },
+    {
+      "id": "K5s6A3laAXc",
+      "title": "Parayathe Parayunna",
+      "artist": "Nikhil Chandran"
+    },
+    {
+      "id": "Lq5d4tilc9o",
+      "title": "Ithale Nee",
+      "artist": "Najim Arshad"
+    },
+    {
+      "id": "owvCPHJWJcE",
+      "title": "Piravi",
+      "artist": "Vaikom Vijayalakshmi"
+    },
+    {
+      "id": "NZxjtbhEmkc",
+      "title": "Undu Saghi",
+      "artist": "K. G. Markose"
+    },
+    {
+      "id": "I2-JBtOZ8H0",
+      "title": "Ente Khalbile",
+      "artist": "Vineeth Sreenivasan"
+    },
+    {
+      "id": "GrB_zJwUFkc",
+      "title": "Chirimukilum - Female Version",
+      "artist": "Haritha Balakrishnan"
+    },
+    {
+      "id": "jngMCIY4hm8",
+      "title": "Aji Jhoro Jhoro Mukhoro",
+      "artist": "Mridula"
+    },
+    {
+      "id": "maGx1qLP3GE",
+      "title": "Anuraaga Vilochananayi",
+      "artist": "Vidyasagar"
+    }
   ],
   "melodies": [
-    "vHNAU4lAKuA",
-    "maGx1qLP3GE",
-    "XotCQRUbqMM",
-    "P-jKtzUuVcM",
-    "Xqg9KWFyVAQ",
-    "YIipyuh7VuQ",
-    "6cXznuU2-MQ",
-    "zp-zzAu4uCw",
-    "FLz9hCjELWk",
-    "8PViVNz-DN8"
+    {
+      "id": "vHNAU4lAKuA",
+      "title": "Varamanjalaadiya",
+      "artist": "Sujatha Mohan"
+    },
+    {
+      "id": "maGx1qLP3GE",
+      "title": "Anuragha Vilochananayi",
+      "artist": "Shreya Ghoshal"
+    },
+    {
+      "id": "XotCQRUbqMM",
+      "title": "Malare",
+      "artist": "Vijay Yesudas"
+    },
+    {
+      "id": "P-jKtzUuVcM",
+      "title": "Pavizha Mazha",
+      "artist": "K.S. Harisankar"
+    },
+    {
+      "id": "Xqg9KWFyVAQ",
+      "title": "Karmukilil",
+      "artist": "K.S. Chithra"
+    },
+    {
+      "id": "YIipyuh7VuQ",
+      "title": "Aniyathipraavu - Oru Rajamalli",
+      "artist": "Srinivas"
+    },
+    {
+      "id": "6cXznuU2-MQ",
+      "title": "Jeevamshamayi",
+      "artist": "K.S. Harisankar"
+    },
+    {
+      "id": "zp-zzAu4uCw",
+      "title": "Mazhaye Mazhaye",
+      "artist": "Haricharan"
+    },
+    {
+      "id": "FLz9hCjELWk",
+      "title": "Kamini",
+      "artist": "K.S. Harisankar"
+    },
+    {
+      "id": "8PViVNz-DN8",
+      "title": "Oru Pushpam Mathram",
+      "artist": "K.J. Yesudas"
+    }
   ],
   "indie": [
-    "lPsz2raYePI",
-    "tS3q0ktFoLk",
-    "Ett_FZupxy8",
-    "A0UMazWUS9U",
-    "B3hlqsBY0Qk",
-    "iOkBpZ8lipM",
-    "WOg4rHr1PyI",
-    "oYK6JU7Nx38"
+    {
+      "id": "lPsz2raYePI",
+      "title": "Nada Nada",
+      "artist": "Avial"
+    },
+    {
+      "id": "tS3q0ktFoLk",
+      "title": "Thaalangal",
+      "artist": "Job Kurian"
+    },
+    {
+      "id": "Ett_FZupxy8",
+      "title": "Joy of Little Things",
+      "artist": "When Chai Met Toast"
+    },
+    {
+      "id": "A0UMazWUS9U",
+      "title": "Chekele",
+      "artist": "Avial"
+    },
+    {
+      "id": "B3hlqsBY0Qk",
+      "title": "Kantha",
+      "artist": "Masala Coffee"
+    },
+    {
+      "id": "iOkBpZ8lipM",
+      "title": "Hope",
+      "artist": "Job Kurian"
+    },
+    {
+      "id": "WOg4rHr1PyI",
+      "title": "Aararo",
+      "artist": "Sooraj Santhosh"
+    },
+    {
+      "id": "oYK6JU7Nx38",
+      "title": "Navarasam",
+      "artist": "Thaikkudam Bridge"
+    }
   ],
   "hiphop": [
-    "DvS1rlMA64c",
-    "43zYOj0z2wg",
-    "sypA0xynXJ8",
-    "I1FSjN_67GU",
-    "R9ruhJq455w",
-    "r8iPHiciQd0",
-    "RgYAvJxyng0"
+    {
+      "id": "DvS1rlMA64c",
+      "title": "Malabari Banger",
+      "artist": "M.H.R"
+    },
+    {
+      "id": "43zYOj0z2wg",
+      "title": "Pani Paali",
+      "artist": "Neeraj Madhav"
+    },
+    {
+      "id": "sypA0xynXJ8",
+      "title": "Local Mandan",
+      "artist": "Fejo"
+    },
+    {
+      "id": "I1FSjN_67GU",
+      "title": "Kalapila",
+      "artist": "Street Academics"
+    },
+    {
+      "id": "R9ruhJq455w",
+      "title": "Aarada Ath",
+      "artist": "M.H.R"
+    },
+    {
+      "id": "r8iPHiciQd0",
+      "title": "Amsham",
+      "artist": "Aksomaniac"
+    },
+    {
+      "id": "RgYAvJxyng0",
+      "title": "Chatha",
+      "artist": "Street Academics"
+    }
   ],
   "pop": [
-    "P7-xs4XF4CA",
-    "04yBdr5jFbo",
-    "QcESg-9Vfzo",
-    "Tfi3oWgZp1Y",
-    "d6pZAj6YLsk",
-    "Lq5d4tilc9o"
+    {
+      "id": "P7-xs4XF4CA",
+      "title": "Kudukku",
+      "artist": "Vineeth Sreenivasan"
+    },
+    {
+      "id": "04yBdr5jFbo",
+      "title": "Insaanile",
+      "artist": "Jubair Muhammed"
+    },
+    {
+      "id": "QcESg-9Vfzo",
+      "title": "Appangal Embadum",
+      "artist": "Anna Katharina Valayil"
+    },
+    {
+      "id": "Tfi3oWgZp1Y",
+      "title": "Lajjavathiye",
+      "artist": "Jassie Gift"
+    },
+    {
+      "id": "d6pZAj6YLsk",
+      "title": "Ajitha Hare",
+      "artist": "Gowry Lekshmi"
+    },
+    {
+      "id": "Lq5d4tilc9o",
+      "title": "Ithale Nee",
+      "artist": "Najim Arshad"
+    }
   ],
   "rock": [
-    "lPsz2raYePI",
-    "A0UMazWUS9U",
-    "QUxetheUJVs",
-    "Wup5wyvmwAQ",
-    "nZsMJgWXb6M",
-    "90qiUvKu5WA"
+    {
+      "id": "lPsz2raYePI",
+      "title": "Nada Nada",
+      "artist": "Avial"
+    },
+    {
+      "id": "A0UMazWUS9U",
+      "title": "Chekele",
+      "artist": "Avial"
+    },
+    {
+      "id": "QUxetheUJVs",
+      "title": "Fish Rock",
+      "artist": "Thaikkudam Bridge"
+    },
+    {
+      "id": "Wup5wyvmwAQ",
+      "title": "Karukara",
+      "artist": "Avial"
+    },
+    {
+      "id": "nZsMJgWXb6M",
+      "title": "Nostalgia Jukebox",
+      "artist": "Thaikkudam Bridge"
+    },
+    {
+      "id": "90qiUvKu5WA",
+      "title": "Aadu Pambe",
+      "artist": "Avial"
+    }
   ],
   "folk": [
-    "1YiiccCv93E",
-    "A0UMazWUS9U",
-    "yRGUwOnXP30"
+    {
+      "id": "1YiiccCv93E",
+      "title": "Chalakudy Chanthayil",
+      "artist": "Kalabhavan Mani"
+    },
+    {
+      "id": "A0UMazWUS9U",
+      "title": "Chekele",
+      "artist": "Avial"
+    },
+    {
+      "id": "yRGUwOnXP30",
+      "title": "Karthaave",
+      "artist": "Job Kurian"
+    }
   ],
   "classics": [
-    "HJ9njZumF9M",
-    "BOjJGALm2kQ",
-    "soyx2Ynuaz8",
-    "kfAXIqrTWbY"
+    {
+      "id": "HJ9njZumF9M",
+      "title": "Pramadavanam",
+      "artist": "K.J. Yesudas"
+    },
+    {
+      "id": "BOjJGALm2kQ",
+      "title": "Harivarasanam",
+      "artist": "K.J. Yesudas"
+    },
+    {
+      "id": "soyx2Ynuaz8",
+      "title": "Devasabhathalam",
+      "artist": "K.S. Chithra"
+    },
+    {
+      "id": "kfAXIqrTWbY",
+      "title": "Alliyambal Kadavil",
+      "artist": "K.J. Yesudas"
+    }
   ],
   "all": [
-    "epAFDEJImrU",
-    "P7-xs4XF4CA",
-    "PlAY2AaVJFY",
-    "QcESg-9Vfzo",
-    "Tfi3oWgZp1Y",
-    "VzT2xurZrbI",
-    "HUAAYwtusLI",
-    "PcsvpfKPOMQ",
-    "WYtnfsDJ6IA",
-    "W0fKl43QmIE",
-    "d6pZAj6YLsk",
-    "CWpUqIYV9ok",
-    "K5s6A3laAXc",
-    "Lq5d4tilc9o",
-    "owvCPHJWJcE",
-    "NZxjtbhEmkc",
-    "I2-JBtOZ8H0",
-    "GrB_zJwUFkc",
-    "jngMCIY4hm8",
-    "maGx1qLP3GE",
-    "vHNAU4lAKuA",
-    "XotCQRUbqMM",
-    "P-jKtzUuVcM",
-    "Xqg9KWFyVAQ",
-    "YIipyuh7VuQ",
-    "6cXznuU2-MQ",
-    "zp-zzAu4uCw",
-    "FLz9hCjELWk",
-    "8PViVNz-DN8",
-    "lPsz2raYePI",
-    "tS3q0ktFoLk",
-    "Ett_FZupxy8",
-    "A0UMazWUS9U",
-    "B3hlqsBY0Qk",
-    "iOkBpZ8lipM",
-    "WOg4rHr1PyI",
-    "oYK6JU7Nx38",
-    "DvS1rlMA64c",
-    "43zYOj0z2wg",
-    "sypA0xynXJ8",
-    "I1FSjN_67GU",
-    "R9ruhJq455w",
-    "r8iPHiciQd0",
-    "RgYAvJxyng0",
-    "04yBdr5jFbo",
-    "QUxetheUJVs",
-    "Wup5wyvmwAQ",
-    "nZsMJgWXb6M",
-    "90qiUvKu5WA",
-    "1YiiccCv93E",
-    "yRGUwOnXP30",
-    "HJ9njZumF9M",
-    "BOjJGALm2kQ",
-    "soyx2Ynuaz8",
-    "kfAXIqrTWbY"
+    {
+      "id": "epAFDEJImrU",
+      "title": "Darshana",
+      "artist": "Hesham Abdul Wahab"
+    },
+    {
+      "id": "P7-xs4XF4CA",
+      "title": "Kudukku",
+      "artist": "Vineeth Sreenivasan"
+    },
+    {
+      "id": "PlAY2AaVJFY",
+      "title": "Aaradhike",
+      "artist": "Shreya Ghoshal"
+    },
+    {
+      "id": "QcESg-9Vfzo",
+      "title": "Appangal Embadum",
+      "artist": "Anna Katharina Valayil"
+    },
+    {
+      "id": "Tfi3oWgZp1Y",
+      "title": "Lajjavathiye",
+      "artist": "Jassie Gift"
+    },
+    {
+      "id": "VzT2xurZrbI",
+      "title": "Kalapakkaara",
+      "artist": "Jakes Bejoy"
+    },
+    {
+      "id": "HUAAYwtusLI",
+      "title": "Jaada",
+      "artist": "Sushin Shyam"
+    },
+    {
+      "id": "PcsvpfKPOMQ",
+      "title": "Athiran - Ee Kaattu",
+      "artist": "Sithara Krishnakumar"
+    },
+    {
+      "id": "WYtnfsDJ6IA",
+      "title": "Scene Contra",
+      "artist": "Gopi Sundar"
+    },
+    {
+      "id": "W0fKl43QmIE",
+      "title": "Manikya Malaraya Poovi",
+      "artist": "Vineeth Sreenivasan"
+    },
+    {
+      "id": "d6pZAj6YLsk",
+      "title": "Ajitha Hare",
+      "artist": "Gowry Lekshmi"
+    },
+    {
+      "id": "CWpUqIYV9ok",
+      "title": "Cherukadhapole",
+      "artist": "Rex Vijayan"
+    },
+    {
+      "id": "K5s6A3laAXc",
+      "title": "Parayathe Parayunna",
+      "artist": "Nikhil Chandran"
+    },
+    {
+      "id": "Lq5d4tilc9o",
+      "title": "Ithale Nee",
+      "artist": "Najim Arshad"
+    },
+    {
+      "id": "owvCPHJWJcE",
+      "title": "Piravi",
+      "artist": "Vaikom Vijayalakshmi"
+    },
+    {
+      "id": "NZxjtbhEmkc",
+      "title": "Undu Saghi",
+      "artist": "K. G. Markose"
+    },
+    {
+      "id": "I2-JBtOZ8H0",
+      "title": "Ente Khalbile",
+      "artist": "Vineeth Sreenivasan"
+    },
+    {
+      "id": "GrB_zJwUFkc",
+      "title": "Chirimukilum - Female Version",
+      "artist": "Haritha Balakrishnan"
+    },
+    {
+      "id": "jngMCIY4hm8",
+      "title": "Aji Jhoro Jhoro Mukhoro",
+      "artist": "Mridula"
+    },
+    {
+      "id": "maGx1qLP3GE",
+      "title": "Anuraaga Vilochananayi",
+      "artist": "Vidyasagar"
+    },
+    {
+      "id": "vHNAU4lAKuA",
+      "title": "Varamanjalaadiya",
+      "artist": "Sujatha Mohan"
+    },
+    {
+      "id": "XotCQRUbqMM",
+      "title": "Malare",
+      "artist": "Vijay Yesudas"
+    },
+    {
+      "id": "P-jKtzUuVcM",
+      "title": "Pavizha Mazha",
+      "artist": "K.S. Harisankar"
+    },
+    {
+      "id": "Xqg9KWFyVAQ",
+      "title": "Karmukilil",
+      "artist": "K.S. Chithra"
+    },
+    {
+      "id": "YIipyuh7VuQ",
+      "title": "Aniyathipraavu - Oru Rajamalli",
+      "artist": "Srinivas"
+    },
+    {
+      "id": "6cXznuU2-MQ",
+      "title": "Jeevamshamayi",
+      "artist": "K.S. Harisankar"
+    },
+    {
+      "id": "zp-zzAu4uCw",
+      "title": "Mazhaye Mazhaye",
+      "artist": "Haricharan"
+    },
+    {
+      "id": "FLz9hCjELWk",
+      "title": "Kamini",
+      "artist": "K.S. Harisankar"
+    },
+    {
+      "id": "8PViVNz-DN8",
+      "title": "Oru Pushpam Mathram",
+      "artist": "K.J. Yesudas"
+    },
+    {
+      "id": "lPsz2raYePI",
+      "title": "Nada Nada",
+      "artist": "Avial"
+    },
+    {
+      "id": "tS3q0ktFoLk",
+      "title": "Thaalangal",
+      "artist": "Job Kurian"
+    },
+    {
+      "id": "Ett_FZupxy8",
+      "title": "Joy of Little Things",
+      "artist": "When Chai Met Toast"
+    },
+    {
+      "id": "A0UMazWUS9U",
+      "title": "Chekele",
+      "artist": "Avial"
+    },
+    {
+      "id": "B3hlqsBY0Qk",
+      "title": "Kantha",
+      "artist": "Masala Coffee"
+    },
+    {
+      "id": "iOkBpZ8lipM",
+      "title": "Hope",
+      "artist": "Job Kurian"
+    },
+    {
+      "id": "WOg4rHr1PyI",
+      "title": "Aararo",
+      "artist": "Sooraj Santhosh"
+    },
+    {
+      "id": "oYK6JU7Nx38",
+      "title": "Navarasam",
+      "artist": "Thaikkudam Bridge"
+    },
+    {
+      "id": "DvS1rlMA64c",
+      "title": "Malabari Banger",
+      "artist": "M.H.R"
+    },
+    {
+      "id": "43zYOj0z2wg",
+      "title": "Pani Paali",
+      "artist": "Neeraj Madhav"
+    },
+    {
+      "id": "sypA0xynXJ8",
+      "title": "Local Mandan",
+      "artist": "Fejo"
+    },
+    {
+      "id": "I1FSjN_67GU",
+      "title": "Kalapila",
+      "artist": "Street Academics"
+    },
+    {
+      "id": "R9ruhJq455w",
+      "title": "Aarada Ath",
+      "artist": "M.H.R"
+    },
+    {
+      "id": "r8iPHiciQd0",
+      "title": "Amsham",
+      "artist": "Aksomaniac"
+    },
+    {
+      "id": "RgYAvJxyng0",
+      "title": "Chatha",
+      "artist": "Street Academics"
+    },
+    {
+      "id": "04yBdr5jFbo",
+      "title": "Insaanile",
+      "artist": "Jubair Muhammed"
+    },
+    {
+      "id": "QUxetheUJVs",
+      "title": "Fish Rock",
+      "artist": "Thaikkudam Bridge"
+    },
+    {
+      "id": "Wup5wyvmwAQ",
+      "title": "Karukara",
+      "artist": "Avial"
+    },
+    {
+      "id": "nZsMJgWXb6M",
+      "title": "Nostalgia Jukebox",
+      "artist": "Thaikkudam Bridge"
+    },
+    {
+      "id": "90qiUvKu5WA",
+      "title": "Aadu Pambe",
+      "artist": "Avial"
+    },
+    {
+      "id": "1YiiccCv93E",
+      "title": "Chalakudy Chanthayil",
+      "artist": "Kalabhavan Mani"
+    },
+    {
+      "id": "yRGUwOnXP30",
+      "title": "Karthaave",
+      "artist": "Job Kurian"
+    },
+    {
+      "id": "HJ9njZumF9M",
+      "title": "Pramadavanam",
+      "artist": "K.J. Yesudas"
+    },
+    {
+      "id": "BOjJGALm2kQ",
+      "title": "Harivarasanam",
+      "artist": "K.J. Yesudas"
+    },
+    {
+      "id": "soyx2Ynuaz8",
+      "title": "Devasabhathalam",
+      "artist": "K.S. Chithra"
+    },
+    {
+      "id": "kfAXIqrTWbY",
+      "title": "Alliyambal Kadavil",
+      "artist": "K.J. Yesudas"
+    }
   ]
 }

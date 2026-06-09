@@ -107,6 +107,35 @@ CURATED_TRACKS = {
     ]
 }
 
+# Fallback curated tracks with full details
+FALLBACK_TRACKS = {
+    "rock": [
+        {"id": "tO01J-M3g0U", "title": "Nada Nada", "artist": "Avial"},
+        {"id": "y_2aJ7e8u8A", "title": "Fish Rock", "artist": "Thaikkudam Bridge"}
+    ],
+    "folk": [
+        {"id": "_BfH_T8G8s0", "title": "Karthaave", "artist": "Job Kurian"},
+        {"id": "tO01J-M3g0U", "title": "Nada Nada", "artist": "Avial"}
+    ],
+    "classics": [
+        {"id": "7wMIn_Wk7_U", "title": "Manikya Malaraya Poovi", "artist": "Vineeth Sreenivasan"}
+    ],
+    "hiphop": [
+        {"id": "8a0UvOveQ68", "title": "Malabari Banger", "artist": "M.H.R"}
+    ],
+    "indie": [
+        {"id": "tO01J-M3g0U", "title": "Nada Nada", "artist": "Avial"},
+        {"id": "8a0UvOveQ68", "title": "Malabari Banger", "artist": "M.H.R"},
+        {"id": "2x9sI6q3Spg", "title": "Thaalangal", "artist": "Job Kurian"}
+    ],
+    "melodies": [
+        {"id": "L0yNMDXmS0E", "title": "Darshana", "artist": "Hesham Abdul Wahab"},
+        {"id": "88M6K95k-v4", "title": "Aaradhike", "artist": "Shreya Ghoshal"},
+        {"id": "7wMIn_Wk7_U", "title": "Manikya Malaraya Poovi", "artist": "Vineeth Sreenivasan"},
+        {"id": "maGx1qLP3GE", "title": "Anuragha Vilochananayi", "artist": "Shreya Ghoshal"}
+    ]
+}
+
 # Resolve paths relative to project root
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE_PATH = os.path.join(BASE_DIR, "backend", "track_cache.json")
@@ -219,7 +248,8 @@ def main():
     
     for genre, tags in GENRE_TAGS.items():
         print(f"\nProcessing Genre: {genre.upper()}")
-        genre_video_ids = []
+        genre_tracks = []
+        seen_ids = set()
         seen_tracks_in_genre = set()
         
         # 1. Merge Curated tracks list with Last.fm scraped list
@@ -239,11 +269,10 @@ def main():
                 continue
             seen_tracks_in_genre.add(track_key)
             
+            video_id = None
             # Check cache
             if track_key in track_cache:
-                cached_id = track_cache[track_key]
-                if cached_id: 
-                    genre_video_ids.append(cached_id)
+                video_id = track_cache[track_key]
             else:
                 # Not in cache, needs YouTube API search
                 if search_count >= MAX_NEW_YOUTUBE_SEARCHES:
@@ -257,26 +286,34 @@ def main():
                 search_count += 1
                 track_cache[track_key] = video_id # Save result (even if None) to cache to avoid re-searching
                 
-                if video_id:
-                    genre_video_ids.append(video_id)
+            if video_id and video_id not in seen_ids:
+                seen_ids.add(video_id)
+                genre_tracks.append({
+                    "id": video_id,
+                    "title": track["title"],
+                    "artist": track["artist"]
+                })
         
-        # Remove duplicate IDs within this genre
-        unique_ids = []
-        for vid in genre_video_ids:
-            if vid not in unique_ids:
-                unique_ids.append(vid)
+        # If API returned too few tracks (< 3) for this genre, append our curated list
+        if len(genre_tracks) < 3 and genre in FALLBACK_TRACKS:
+            for fallback in FALLBACK_TRACKS[genre]:
+                if fallback["id"] not in seen_ids:
+                    seen_ids.add(fallback["id"])
+                    genre_tracks.append(fallback)
             
-        genre_results[genre] = unique_ids
-        print(f"Genre {genre} has {len(unique_ids)} tracks.")
+        genre_results[genre] = genre_tracks
+        print(f"Genre {genre} has {len(genre_tracks)} tracks.")
 
     # Build the "all" category as union of all genres
-    all_ids = []
-    for ids in genre_results.values():
-        for vid in ids:
-            if vid not in all_ids:
-                all_ids.append(vid)
-    genre_results["all"] = all_ids
-    print(f"\nAggregate 'all' category contains {len(all_ids)} total tracks.")
+    all_tracks = []
+    seen_all_ids = set()
+    for tracks in genre_results.values():
+        for track in tracks:
+            if track["id"] not in seen_all_ids:
+                seen_all_ids.add(track["id"])
+                all_tracks.append(track)
+    genre_results["all"] = all_tracks
+    print(f"\nAggregate 'all' category contains {len(all_tracks)} total tracks.")
 
     # Save outputs
     # 1. Update public/songs.json
