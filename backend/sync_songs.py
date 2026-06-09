@@ -136,6 +136,11 @@ FALLBACK_TRACKS = {
     ]
 }
 
+# Blocklist of track artist/title keys (lowercased) that are verified to be non-Malayalam or invalid
+BLACKLISTED_TRACKS = {
+    "mridula - aji jhoro jhoro mukhoro",
+}
+
 # Resolve paths relative to project root
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE_PATH = os.path.join(BASE_DIR, "backend", "track_cache.json")
@@ -268,6 +273,10 @@ def main():
             if track_key in seen_tracks_in_genre:
                 continue
             seen_tracks_in_genre.add(track_key)
+            
+            if track_key in BLACKLISTED_TRACKS:
+                print(f"Skipping blacklisted non-Malayalam track: {track_key}")
+                continue
             
             video_id = None
             # Check cache
