@@ -1,0 +1,17 @@
+# Node.js
+node_modules/
+dist/
+
+# Local Environment Credentials
+.env
+
+# Python compilation and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# OS-specific files
+.DS_Store
+Thumbs.db

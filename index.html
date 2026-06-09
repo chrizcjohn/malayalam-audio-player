@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malayalam Music Randomizer - Discover Malayalam Music Videos</title>
+    <meta name="description" content="Discover and stream random Malayalam music videos across multiple genres including Mollywood hits, Melodies, Indie, Rock, Hip Hop, and Classics.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background glowing blobs for visual interest -->
+    <div class="glow-bg">
+        <div class="blob blob-1" id="blob-1"></div>
+        <div class="blob blob-2" id="blob-2"></div>
+    </div>
+
+    <main class="player-container">
+        <header class="app-header">
+            <h1 class="app-title">Malayalam Music <span>Randomizer</span></h1>
+            <p class="app-subtitle">Decoupled metadata discovery. Official YouTube video streams.</p>
+        </header>
+
+        <!-- Player Board Section -->
+        <section class="player-board" aria-label="Music Player">
+            <!-- Screen for YouTube Video -->
+            <div class="screen-wrapper">
+                <div class="screen-shadow"></div>
+                <div class="screen-content">
+                    <div id="yt-player"></div>
+                    <div class="player-overlay" id="player-overlay">
+                        <div class="overlay-spinner"></div>
+                        <p class="overlay-text" id="overlay-text">Initializing Player...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualizer representation -->
+            <div class="visualizer-wrapper" id="visualizer-wrapper">
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+                <span class="vis-bar"></span>
+            </div>
+
+            <!-- Controls Panel -->
+            <div class="controls-panel">
+                <div class="song-info">
+                    <h2 class="song-title" id="song-title">Select a Genre to Begin</h2>
+                    <p class="song-artist" id="song-artist">Playback streams directly from official YouTube source</p>
+                </div>
+
+                <!-- Custom audio controls -->
+                <div class="playback-controls">
+                    <button class="ctrl-btn" id="btn-prev" aria-label="Previous Track" title="Previous Track" disabled>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5"></line></svg>
+                    </button>
+                    
+                    <button class="ctrl-btn play-btn" id="btn-play-pause" aria-label="Play" title="Play">
+                        <svg class="play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <svg class="pause-icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+                    </button>
+
+                    <button class="ctrl-btn" id="btn-next" aria-label="Next Random Track" title="Next Random Track">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19"></line></svg>
+                    </button>
+                </div>
+
+                <!-- Volume level slider -->
+                <div class="volume-control">
+                    <button class="volume-btn" id="btn-mute" aria-label="Mute Volume" title="Mute">
+                        <svg id="volume-icon-high" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                        <svg id="volume-icon-mute" class="hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+                    </button>
+                    <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="80" aria-label="Volume level slider">
+                </div>
+            </div>
+        </section>
+
+        <!-- Genre Selection Section -->
+        <section class="genres-section" aria-label="Genre Selection">
+            <h3 class="section-title">Select Genre</h3>
+            <div class="genre-grid" id="genre-grid">
+                <button class="genre-pill active" data-genre="all" id="pill-all">All Genres</button>
+                <button class="genre-pill" data-genre="mollywood" id="pill-mollywood">Mollywood</button>
+                <button class="genre-pill" data-genre="melodies" id="pill-melodies">Melodies</button>
+                <button class="genre-pill" data-genre="indie" id="pill-indie">Indie</button>
+                <button class="genre-pill" data-genre="hiphop" id="pill-hiphop">Hip Hop / Rap</button>
+                <button class="genre-pill" data-genre="pop" id="pill-pop">Pop</button>
+                <button class="genre-pill" data-genre="rock" id="pill-rock">Rock</button>
+                <button class="genre-pill" data-genre="folk" id="pill-folk">Folk</button>
+                <button class="genre-pill" data-genre="classics" id="pill-classics">Classics</button>
+            </div>
+        </section>
+
+        <footer class="app-footer">
+            <p>Database updated daily via GitHub Actions. Powered by <a href="https://www.last.fm" target="_blank" rel="noopener noreferrer">Last.fm</a> & <a href="https://developers.google.com/youtube" target="_blank" rel="noopener noreferrer">YouTube API</a>.</p>
+        </footer>
+    </main>
+
+    <!-- Project Entry Script -->
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
