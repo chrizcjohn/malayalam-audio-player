@@ -2,6 +2,7 @@
 import os
 import json
 import sys
+import requests
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
@@ -14,102 +15,171 @@ if sys.platform.startswith("win"):
         pass
 
 # Configurations
-TRACKS_PER_GENRE = 80 # Fetch up to 80 tracks per genre (gives ~600+ total songs)
+LASTFM_API_URL = "http://ws.audioscrobbler.com/2.0/"
+TRACK_LIMIT_PER_TAG = 20 
+MAX_NEW_YOUTUBE_SEARCHES = 90 # Safe limit to stay below YouTube's 100 search daily quota limit (1 search = 100 points)
 
-# Playlist search queries for each Malayalam genre
-GENRE_PLAYLIST_QUERIES = {
-    "mollywood": "latest malayalam movie video songs playlist",
-    "melodies": "evergreen malayalam melody songs playlist",
-    "indie": "malayalam indie music independent playlist",
-    "hiphop": "malayalam hip hop rap songs playlist",
-    "pop": "malayalam pop songs new hits playlist",
-    "rock": "malayalam rock bands avial thaikkudam bridge playlist",
-    "folk": "malayalam naadan paattu traditional folk songs playlist",
-    "classics": "malayalam old classics 70s 80s 90s songs playlist"
+GENRE_TAGS = {
+    "mollywood": ["mollywood", "malayalam cinema"],
+    "melodies": ["malayalam melody", "malayalam romantic"],
+    "indie": ["malayalam indie"],
+    "hiphop": ["malayalam hip hop", "malayalam rap"],
+    "pop": ["malayalam pop"],
+    "rock": ["malayalam rock"],
+    "folk": ["naadan paattu", "malayalam folk"],
+    "classics": ["malayalam classics", "malayalam oldies"]
+}
+
+# High-quality Curated Malayalam Tracks to seed the database immediately
+CURATED_TRACKS = {
+    "mollywood": [
+        {"title": "Darshana", "artist": "Hesham Abdul Wahab"},
+        {"title": "Kudukku", "artist": "Vineeth Sreenivasan"},
+        {"title": "Aaradhike", "artist": "Shreya Ghoshal"},
+        {"title": "Appangal Embadum", "artist": "Anna Katharina Valayil"},
+        {"title": "Lajjavathiye", "artist": "Jassie Gift"},
+        {"title": "Kalapakkaara", "artist": "Jakes Bejoy"},
+        {"title": "Jaada", "artist": "Sushin Shyam"},
+        {"title": "Athiran - Ee Kaattu", "artist": "Sithara Krishnakumar"},
+        {"title": "Scene Contra", "artist": "Gopi Sundar"},
+        {"title": "Manikya Malaraya Poovi", "artist": "Vineeth Sreenivasan"}
+    ],
+    "melodies": [
+        {"title": "Varamanjalaadiya", "artist": "Sujatha Mohan"},
+        {"title": "Anuragha Vilochananayi", "artist": "Shreya Ghoshal"},
+        {"title": "Malare", "artist": "Vijay Yesudas"},
+        {"title": "Pavizha Mazha", "artist": "K.S. Harisankar"},
+        {"title": "Karmukilil", "artist": "K.S. Chithra"},
+        {"title": "Aniyathipraavu - Oru Rajamalli", "artist": "Srinivas"},
+        {"title": "Jeevamshamayi", "artist": "K.S. Harisankar"},
+        {"title": "Mazhaye Mazhaye", "artist": "Haricharan"},
+        {"title": "Kamini", "artist": "K.S. Harisankar"},
+        {"title": "Oru Pushpam Mathram", "artist": "K.J. Yesudas"}
+    ],
+    "indie": [
+        {"title": "Nada Nada", "artist": "Avial"},
+        {"title": "Thaalangal", "artist": "Job Kurian"},
+        {"title": "Joy of Little Things", "artist": "When Chai Met Toast"},
+        {"title": "Chekele", "artist": "Avial"},
+        {"title": "Kantha", "artist": "Masala Coffee"},
+        {"title": "Hope", "artist": "Job Kurian"},
+        {"title": "Aararo", "artist": "Sooraj Santhosh"},
+        {"title": "Navarasam", "artist": "Thaikkudam Bridge"}
+    ],
+    "hiphop": [
+        {"title": "Malabari Banger", "artist": "M.H.R"},
+        {"title": "Pani Paali", "artist": "Neeraj Madhav"},
+        {"title": "Local Mandan", "artist": "Fejo"},
+        {"title": "Kalapila", "artist": "Street Academics"},
+        {"title": "Aarada Ath", "artist": "M.H.R"},
+        {"title": "Amsham", "artist": "Aksomaniac"},
+        {"title": "Chatha", "artist": "Street Academics"}
+    ],
+    "pop": [
+        {"title": "Kudukku", "artist": "Vineeth Sreenivasan"},
+        {"title": "Insaanile", "artist": "Jubair Muhammed"},
+        {"title": "Appangal Embadum", "artist": "Anna Katharina Valayil"},
+        {"title": "Lajjavathiye", "artist": "Jassie Gift"},
+        {"title": "Johny Mone", "artist": "Dulquer Salmaan"},
+        {"title": "Chundari Penne", "artist": "Dulquer Salmaan"}
+    ],
+    "rock": [
+        {"title": "Nada Nada", "artist": "Avial"},
+        {"title": "Chekele", "artist": "Avial"},
+        {"title": "Fish Rock", "artist": "Thaikkudam Bridge"},
+        {"title": "Karukara", "artist": "Avial"},
+        {"title": "Nostalgia Jukebox", "artist": "Thaikkudam Bridge"},
+        {"title": "Aadu Pambe", "artist": "Avial"}
+    ],
+    "folk": [
+        {"title": "Chalakudy Chanthayil", "artist": "Kalabhavan Mani"},
+        {"title": "Kuttyadi", "artist": "Pradeep Palluruthy"},
+        {"title": "Chekele", "artist": "Avial"},
+        {"title": "Karthaave", "artist": "Job Kurian"},
+        {"title": "Karutha Penne", "artist": "Kalabhavan Mani"}
+    ],
+    "classics": [
+        {"title": "Pramadavanam", "artist": "K.J. Yesudas"},
+        {"title": "Rajahamsame", "artist": "K.S. Chithra"},
+        {"title": "Harivarasanam", "artist": "K.J. Yesudas"},
+        {"title": "Devasabhathalam", "artist": "K.S. Chithra"},
+        {"title": "Alliyambal Kadavil", "artist": "K.J. Yesudas"}
+    ]
 }
 
 # Resolve paths relative to project root
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PLAYLIST_CACHE_PATH = os.path.join(BASE_DIR, "backend", "playlist_cache.json")
+CACHE_PATH = os.path.join(BASE_DIR, "backend", "track_cache.json")
 SONGS_JSON_PATH = os.path.join(BASE_DIR, "public", "songs.json")
 
-def load_playlist_cache():
-    if os.path.exists(PLAYLIST_CACHE_PATH):
+def load_cache():
+    if os.path.exists(CACHE_PATH):
         try:
-            with open(PLAYLIST_CACHE_PATH, "r", encoding="utf-8") as f:
+            with open(CACHE_PATH, "r", encoding="utf-8") as f:
                 return json.load(f)
         except Exception as e:
-            print(f"Error loading playlist cache: {e}. Starting fresh.")
+            print(f"Error loading cache: {e}. Starting fresh.")
     return {}
 
-def save_playlist_cache(cache):
-    os.makedirs(os.path.dirname(PLAYLIST_CACHE_PATH), exist_ok=True)
-    with open(PLAYLIST_CACHE_PATH, "w", encoding="utf-8") as f:
+def save_cache(cache):
+    os.makedirs(os.path.dirname(CACHE_PATH), exist_ok=True)
+    with open(CACHE_PATH, "w", encoding="utf-8") as f:
         json.dump(cache, f, indent=2, ensure_ascii=False)
-    print(f"Saved playlist cache at {PLAYLIST_CACHE_PATH}")
+    print(f"Saved {len(cache)} items to track cache.")
 
-def find_playlist_on_youtube(youtube_client, query):
+def get_lastfm_tracks(tag, api_key):
+    params = {
+        "method": "tag.gettoptracks",
+        "tag": tag,
+        "api_key": api_key,
+        "format": "json",
+        "limit": TRACK_LIMIT_PER_TAG
+    }
+    try:
+        response = requests.get(LASTFM_API_URL, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        tracks_data = data.get("tracks", {}).get("track", [])
+        
+        if isinstance(tracks_data, dict):
+            tracks_data = [tracks_data]
+            
+        tracks = []
+        for t in tracks_data:
+            name = t.get("name")
+            artist = t.get("artist", {}).get("name")
+            if name and artist:
+                tracks.append({"title": name.strip(), "artist": artist.strip()})
+        return tracks
+    except Exception as e:
+        print(f"Error fetching Last.fm tracks for tag '{tag}': {e}")
+        return []
+
+def search_youtube(query, youtube_client):
     try:
         search_response = youtube_client.search().list(
             q=query,
             part="id,snippet",
             maxResults=1,
-            type="playlist"
+            type="video",
+            videoEmbeddable="true"
         ).execute()
         
         items = search_response.get("items", [])
         if items:
-            playlist_id = items[0]["id"]["playlistId"]
+            video_id = items[0]["id"]["videoId"]
             title = items[0]["snippet"]["title"]
-            print(f"YouTube Resolved Playlist for '{query}': '{title}' [{playlist_id}]")
-            return playlist_id
+            print(f"YouTube Resolved: '{query}' -> [{video_id}] ({title})")
+            return video_id
         else:
-            print(f"YouTube: No playlist found for query: '{query}'")
+            print(f"YouTube: No videos found for query: '{query}'")
             return None
     except HttpError as e:
-        print(f"YouTube API HttpError searching playlist for '{query}': {e}")
+        print(f"YouTube API HttpError searching for '{query}': {e}")
         return None
     except Exception as e:
-        print(f"Error searching playlist for '{query}': {e}")
+        print(f"General error searching YouTube for '{query}': {e}")
         return None
-
-def fetch_playlist_items(youtube_client, playlist_id, max_results):
-    video_ids = []
-    next_page_token = None
-    
-    while len(video_ids) < max_results:
-        try:
-            # Each list request costs only 1 quota unit and returns up to 50 items
-            request = youtube_client.playlistItems().list(
-                playlistId=playlist_id,
-                part="id,snippet",
-                maxResults=min(50, max_results - len(video_ids)),
-                pageToken=next_page_token
-            )
-            response = request.execute()
-            
-            items = response.get("items", [])
-            if not items:
-                break
-                
-            for item in items:
-                video_id = item.get("snippet", {}).get("resourceId", {}).get("videoId")
-                # Filter out private/deleted videos (usually titled "Deleted video" or "Private video")
-                title = item.get("snippet", {}).get("title", "")
-                if video_id and "deleted video" not in title.lower() and "private video" not in title.lower():
-                    video_ids.append(video_id)
-                    
-            next_page_token = response.get("nextPageToken")
-            if not next_page_token:
-                break
-        except HttpError as e:
-            print(f"YouTube API HttpError fetching items for playlist [{playlist_id}]: {e}")
-            break
-        except Exception as e:
-            print(f"Error fetching items for playlist [{playlist_id}]: {e}")
-            break
-            
-    return video_ids
 
 def load_env():
     env_path = os.path.join(BASE_DIR, ".env")
@@ -128,10 +198,11 @@ def load_env():
 
 def main():
     load_env()
+    lastfm_key = os.environ.get("LASTFM_API_KEY")
     youtube_key = os.environ.get("YOUTUBE_API_KEY")
     
-    if not youtube_key:
-        print("ERROR: YOUTUBE_API_KEY environment variable is missing.")
+    if not lastfm_key or not youtube_key:
+        print("ERROR: LASTFM_API_KEY or YOUTUBE_API_KEY environment variables are missing.")
         return
 
     # Initialize YouTube client
@@ -141,39 +212,62 @@ def main():
         print(f"Failed to build YouTube service client: {e}")
         return
 
-    # Load cache for playlist IDs
-    playlist_cache = load_playlist_cache()
+    # Load caches
+    track_cache = load_cache()
     genre_results = {}
+    search_count = 0
     
-    for genre, query in GENRE_PLAYLIST_QUERIES.items():
+    for genre, tags in GENRE_TAGS.items():
         print(f"\nProcessing Genre: {genre.upper()}")
-        playlist_id = None
+        genre_video_ids = []
+        seen_tracks_in_genre = set()
         
-        # Check cache first
-        if genre in playlist_cache:
-            playlist_id = playlist_cache[genre]
-            print(f"Using cached playlist ID for {genre}: [{playlist_id}]")
-        else:
-            # Search YouTube for the playlist (costs 100 units once)
-            playlist_id = find_playlist_on_youtube(youtube_client, query)
-            if playlist_id:
-                playlist_cache[genre] = playlist_id
+        # 1. Merge Curated tracks list with Last.fm scraped list
+        tracks_pool = []
+        if genre in CURATED_TRACKS:
+            tracks_pool.extend(CURATED_TRACKS[genre])
+            
+        for tag in tags:
+            print(f"Fetching Last.fm tag: '{tag}'")
+            scraped = get_lastfm_tracks(tag, lastfm_key)
+            tracks_pool.extend(scraped)
+            
+        # 2. Iterate and resolve track video IDs
+        for track in tracks_pool:
+            track_key = f"{track['artist']} - {track['title']}".lower()
+            if track_key in seen_tracks_in_genre:
+                continue
+            seen_tracks_in_genre.add(track_key)
+            
+            # Check cache
+            if track_key in track_cache:
+                cached_id = track_cache[track_key]
+                if cached_id: 
+                    genre_video_ids.append(cached_id)
+            else:
+                # Not in cache, needs YouTube API search
+                if search_count >= MAX_NEW_YOUTUBE_SEARCHES:
+                    print(f"Reached search limit of {MAX_NEW_YOUTUBE_SEARCHES} for this run. Skipping search for: {track_key}")
+                    continue
+                    
+                query = f"{track['artist']} - {track['title']} (Official Audio Video)"
+                print(f"Searching YouTube: {query}")
+                video_id = search_youtube(query, youtube_client)
                 
-        if playlist_id:
-            # Fetch up to TRACKS_PER_GENRE videos from the playlist (costs 1-2 units)
-            video_ids = fetch_playlist_items(youtube_client, playlist_id, TRACKS_PER_GENRE)
+                search_count += 1
+                track_cache[track_key] = video_id # Save result (even if None) to cache to avoid re-searching
+                
+                if video_id:
+                    genre_video_ids.append(video_id)
+        
+        # Remove duplicate IDs within this genre
+        unique_ids = []
+        for vid in genre_video_ids:
+            if vid not in unique_ids:
+                unique_ids.append(vid)
             
-            # Remove duplicate video IDs
-            unique_ids = []
-            for vid in video_ids:
-                if vid not in unique_ids:
-                    unique_ids.append(vid)
-            
-            genre_results[genre] = unique_ids
-            print(f"Genre {genre} populated with {len(unique_ids)} tracks.")
-        else:
-            genre_results[genre] = []
-            print(f"Genre {genre} has 0 tracks (playlist resolution failed).")
+        genre_results[genre] = unique_ids
+        print(f"Genre {genre} has {len(unique_ids)} tracks.")
 
     # Build the "all" category as union of all genres
     all_ids = []
@@ -191,8 +285,8 @@ def main():
         json.dump(genre_results, f, indent=2, ensure_ascii=False)
     print(f"Updated public songs database at: {SONGS_JSON_PATH}")
     
-    # 2. Save playlist cache to avoid searching next time
-    save_playlist_cache(playlist_cache)
+    # 2. Save track cache
+    save_cache(track_cache)
 
 if __name__ == "__main__":
     main()
