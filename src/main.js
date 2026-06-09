@@ -33,7 +33,7 @@ const genreGrid = document.getElementById('genre-grid');
 async function initSongsData() {
     try {
         updateOverlay('Loading playlist database...');
-        const response = await fetch('/songs.json');
+        const response = await fetch('songs.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
